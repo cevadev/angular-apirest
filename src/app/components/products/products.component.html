@@ -1,8 +1,18 @@
 <div class="products--grid">
-  <!--renderizamos cada product en el componente app-product-->
+  <!-- renderizamos cada product en el componente app-product-->
+  <!-- escuchamos el evento showProduct y recibimo el id y lo procesamos en el evento onShowDetail-->
   <app-product
     [product]="product"
     *ngFor="let product of products"
     (addedProduct)="onAddToShoppingCart($event)"
+    (showProduct)="onShowDetail($event)"
   ></app-product>
+</div>
+<!--manejo de clase dinamica, dependiendo del valor true or false de showProductDetail aplicamos o no el estilo
+    product-detail-->
+<div class="product-detail" [class.active]="showProductDetail">
+  <div>
+    <button (click)="toggleProductDetail()">Close</button>
+    Contenido
+  </div>
 </div>

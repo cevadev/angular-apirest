@@ -19,11 +19,18 @@ export class ProductComponent {
     },
     description: '',
   };
-  @Output() addedProduct = new EventEmitter<Product>();
+
+  // comunicamos al padre los eventos
+  @Output() addedProduct = new EventEmitter<Product>(); // le enviamos un product
+  @Output() showProduct = new EventEmitter<string>(); // le enviamos el id del product
 
   constructor() {}
 
   onAddToCart() {
     this.addedProduct.emit(this.product);
+  }
+
+  onShowDetail() {
+    this.showProduct.emit(this.product.id);
   }
 }
