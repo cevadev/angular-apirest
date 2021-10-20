@@ -1,3 +1,4 @@
+<button (click)="createNewProduct()">create</button>
 <div class="products--grid">
   <!-- renderizamos cada product en el componente app-product-->
   <!-- escuchamos el evento showProduct y recibimo el id y lo procesamos en el evento onShowDetail-->
@@ -11,8 +12,18 @@
 <!--manejo de clase dinamica, dependiendo del valor true or false de showProductDetail aplicamos o no el estilo
     product-detail-->
 <div class="product-detail" [class.active]="showProductDetail">
-  <div>
+  <!-- mostramos el producto solo si se ha seleccionado un producto -->
+  <div *ngIf="productSelected">
     <button (click)="toggleProductDetail()">Close</button>
-    Contenido
+    <h1>{{ productSelected.title }}</h1>
+    <!-- un solo slide por view, el [spaceBetween] usamos el por defecto -->
+    <swiper [slidesPerView]="1">
+      <!-- aplicamos un *ngfor para recorrer el array de imagenes del producto-->
+      <ng-template swiperSlide *ngFor="let img of productSelected.images">
+        <img [src]="img" alt="productSelected.title" />
+      </ng-template>
+    </swiper>
+    <p>{{ productSelected.description }}</p>
+    <button (click)="updateProduct()">editar</button>
   </div>
 </div>
