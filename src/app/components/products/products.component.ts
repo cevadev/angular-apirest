@@ -32,11 +32,12 @@ export class ProductsComponent implements OnInit {
     },
     description: '',
   };
-
   /** Paginacion */
   limit = 10;
   offset = 0;
   /** Paginacion */
+  // manejamos el estado del request
+  statusDetail: 'loading' | 'success' | 'error' | 'init' = 'init';
 
   constructor(
     private storeService: StoreService,
@@ -69,10 +70,21 @@ export class ProductsComponent implements OnInit {
 
   // leemos el id que nos envia el componente hijo app-product
   onShowDetail(id: string) {
-    this.productsService.getProduct(id).subscribe((data) => {
-      this.toggleProductDetail();
-      this.productSelected = data;
-    });
+    // establecemos el status de la peticion
+    this.statusDetail = 'loading';
+    this.productsService.getProduct(id).subscribe(
+      (data) => {
+        this.toggleProductDetail();
+        this.productSelected = data;
+        // si todo salio bien, status exitoso
+        this.statusDetail = 'success';
+      },
+      //manejamos el error (manejo elemental con un alert, no profesional)
+      (errorMsg) => {
+        window.alert(errorMsg);
+        this.statusDetail = 'error';
+      }
+    );
   }
 
   // creacion de un nuevo producto

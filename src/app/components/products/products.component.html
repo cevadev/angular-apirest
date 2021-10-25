@@ -1,4 +1,6 @@
 <button (click)="createNewProduct()">create</button>
+<!-- simulamos ver el detalle de un producto no exisitente-->
+<button (click)="onShowDetail('121212')">detalle not found</button>
 <div class="products--grid">
   <!-- renderizamos cada product en el componente app-product-->
   <!-- escuchamos el evento showProduct y recibimo el id y lo procesamos en el evento onShowDetail-->
@@ -13,6 +15,8 @@
 <!--manejo de clase dinamica, dependiendo del valor true or false de showProductDetail aplicamos o no el estilo
     product-detail-->
 <div class="product-detail" [class.active]="showProductDetail">
+  <!-- mostramos el status. Podemos usar un ngIf si el status esta loading cargar una animacion de loading-->
+  {{ statusDetail }}
   <!-- mostramos el producto solo si se ha seleccionado un producto -->
   <div *ngIf="productSelected">
     <button (click)="toggleProductDetail()">Close</button>
