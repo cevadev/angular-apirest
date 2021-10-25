@@ -8,6 +8,7 @@
     (addedProduct)="onAddToShoppingCart($event)"
     (showProduct)="onShowDetail($event)"
   ></app-product>
+  <button (click)="loadMore()">Load more</button>
 </div>
 <!--manejo de clase dinamica, dependiendo del valor true or false de showProductDetail aplicamos o no el estilo
     product-detail-->
@@ -25,5 +26,6 @@
     </swiper>
     <p>{{ productSelected.description }}</p>
     <button (click)="updateProduct()">editar</button>
+    <button (click)="deleteProduct()">delete</button>
   </div>
 </div>

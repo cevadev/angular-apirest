@@ -33,6 +33,11 @@ export class ProductsComponent implements OnInit {
     description: '',
   };
 
+  /** Paginacion */
+  limit = 10;
+  offset = 0;
+  /** Paginacion */
+
   constructor(
     private storeService: StoreService,
     private productsService: ProductsService
@@ -42,11 +47,14 @@ export class ProductsComponent implements OnInit {
 
   // llamado a api y codigo asincrono
   ngOnInit(): void {
+    // Traemos los primero 10 productos con un offset
     this.productsService
-      .getAllProducts()
+      .getProductsByPage(10, 0)
       // corremos un subscribe para obtener todos los products
       .subscribe((data) => {
         this.products = data;
+        // una vez creada la primera página actualizamos el offset
+        this.offset += this.limit;
       });
   }
 
@@ -97,5 +105,34 @@ export class ProductsComponent implements OnInit {
       // actualizamos la info del producto seleccionado
       this.productSelected = data;
     });
+  }
+
+  deleteProduct() {
+    // obtenemos el id del product seleccionado en ese momento
+    const id = this.productSelected.id;
+    // creamos un delete request
+    this.productsService.delete(id).subscribe(() => {
+      // obtenemos el id del producto seleccionado dentro del array de products
+      const productIndex = this.products.findIndex(
+        (item) => item.id === this.productSelected.id
+      );
+      // removemos el product del array de products
+      this.products.splice(productIndex, 1);
+      // ocultamos el slide del product detail
+      this.showProductDetail = false;
+    });
+  }
+
+  // cargamos mas productos para mostrar
+  loadMore() {
+    this.productsService
+      .getProductsByPage(this.limit, this.offset)
+      .subscribe((data) => {
+        // terminado el renderizado incrementamos el offset
+        // concatenamos los nuevos productos que van llegando y lo asignamos al array de products
+        this.products = this.products.concat(data);
+        // al siguiente request incrementamos el offset
+        this.offset += this.limit;
+      });
   }
 }

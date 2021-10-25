@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  // Dejamos vacio porque en modo desarrollo se aplica el proxy.config.json
+  API_URL: '',
 };
 
 /*
