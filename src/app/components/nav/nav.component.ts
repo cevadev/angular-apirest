@@ -12,8 +12,7 @@ import { User } from '../../models/user.model';
 export class NavComponent implements OnInit {
   activeMenu = false;
   counter = 0;
-  // guardamos el token
-  token = '';
+
   // iniciamos el perfil del user en null
   profile: User | null = null;
 
@@ -41,13 +40,7 @@ export class NavComponent implements OnInit {
     // });
     // hacemos login y obtenemos el perfil
     this.authService.loginAndGet('sebas@mail.com', '1212').subscribe((user) => {
-      this.profile = user;
-      this.token = '---';
-    });
-  }
-
-  getProfile() {
-    this.authService.getProfile(this.token).subscribe((user) => {
+      // return implicito, retornamos el profile
       this.profile = user;
     });
   }

@@ -37,7 +37,9 @@
     <div class="info">
       <div class="account">
         <!-- si no hay login es decir no hay un token entonces mostramos el boton de login-->
-        <button *ngIf="!token; else elseBlock" (click)="login()">Login</button>
+        <button *ngIf="!profile; else elseBlock" (click)="login()">
+          Login
+        </button>
         <!-- en el caso qe si hay un token mostramos el perfil con el email-->
         <ng-template #elseBlock>{{ profile?.email }}</ng-template>
       </div>

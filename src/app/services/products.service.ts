@@ -10,6 +10,8 @@ import { throwError, zip } from 'rxjs';
 
 import { Product } from './../models/product.model';
 import { CreateProductDTO, UpdateProductDTO } from '../models/product.model';
+// importamos el interceptor para encender el contexto
+import { checkTime } from './../interceptors/time.interceptor';
 // importamos de la carpeta environments los dos archivos que empiezan con environment
 // si estamos en modo production leerá environment.prod.ts d elo contrario environment.ts
 import { environment } from '../../environments/environment';
@@ -34,21 +36,25 @@ export class ProductsService {
       params = params.set('limit', limit);
       params = params.set('offset', limit);
     }
-    return this.http.get<Product[]>(this.apiUrl, { params }).pipe(
-      // re-intentamos 3 veces la petición
-      retry(3),
-      // con map podemos evaluar cada uno de los valores que llegan del observable
-      // hacemos una transformacion
-      map((products) =>
-        products.map((item) => {
-          return {
-            // a cada uno de los elementos le agregamos un campo mas que es taxes
-            ...item,
-            taxes: 0.19 * item.price,
-          };
-        })
-      )
-    );
+    // En el params encendemos el contexto para habilitar el checkTime interceptor
+    // cada vez que deseemos que alguna peticion sea evaluada por el time interceptor debemos enviarle el contexto
+    return this.http
+      .get<Product[]>(this.apiUrl, { params, context: checkTime() })
+      .pipe(
+        // re-intentamos 3 veces la petición
+        retry(3),
+        // con map podemos evaluar cada uno de los valores que llegan del observable
+        // hacemos una transformacion
+        map((products) =>
+          products.map((item) => {
+            return {
+              // a cada uno de los elementos le agregamos un campo mas que es taxes
+              ...item,
+              taxes: 0.19 * item.price,
+            };
+          })
+        )
+      );
   }
 
   fetchReadAndUpdate(id: string, dto: UpdateProductDTO) {
