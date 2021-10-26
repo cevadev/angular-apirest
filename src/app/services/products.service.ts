@@ -5,8 +5,8 @@ import {
   HttpErrorResponse,
   HttpStatusCode,
 } from '@angular/common/http';
-import { retry, catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { retry, catchError, map } from 'rxjs/operators';
+import { throwError, zip } from 'rxjs';
 
 import { Product } from './../models/product.model';
 import { CreateProductDTO, UpdateProductDTO } from '../models/product.model';
@@ -36,8 +36,24 @@ export class ProductsService {
     }
     return this.http.get<Product[]>(this.apiUrl, { params }).pipe(
       // re-intentamos 3 veces la petición
-      retry(3)
+      retry(3),
+      // con map podemos evaluar cada uno de los valores que llegan del observable
+      // hacemos una transformacion
+      map((products) =>
+        products.map((item) => {
+          return {
+            // a cada uno de los elementos le agregamos un campo mas que es taxes
+            ...item,
+            taxes: 0.19 * item.price,
+          };
+        })
+      )
     );
+  }
+
+  fetchReadAndUpdate(id: string, dto: UpdateProductDTO) {
+    // zip nos permite correr en paralelo mas de una promesa
+    return zip(this.getProduct(id), this.update(id, dto));
   }
 
   getProduct(id: string) {

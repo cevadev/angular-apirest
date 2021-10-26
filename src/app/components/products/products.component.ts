@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { switchMap } from 'rxjs/operators';
 
 import {
   Product,
@@ -85,6 +86,32 @@ export class ProductsComponent implements OnInit {
         this.statusDetail = 'error';
       }
     );
+  }
+
+  // evitando el callback hell
+  readAndUpdate(id: string) {
+    this.productsService
+      .getProduct(id)
+      .pipe(
+        // actualizamos el title del producto que obtenemos
+        // switchMap es similar al .then() de las promises
+        switchMap((product) =>
+          this.productsService.update(product.id, { title: 'change' })
+        ) // podemos agregar cuantos switchMap() necesite
+      )
+      // obtenemos la respuesta de la actualizacion hecha arriba
+      .subscribe((data) => {
+        // print dato actualizado
+        console.log(data);
+      });
+    // luego que se realizó la primera operación, pasamos a la segunda evitando callback hell
+    this.productsService
+      // obtenemos y actualizamos es decir dos promesas al mismo tiempo con zip en el servicio del componente
+      .fetchReadAndUpdate(id, { title: 'change' })
+      .subscribe((response) => {
+        const read = response[0];
+        const update = response[1];
+      });
   }
 
   // creacion de un nuevo producto

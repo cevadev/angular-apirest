@@ -10,6 +10,9 @@ export interface Product {
   images: string[];
   description: string;
   category: Category;
+
+  // desde el frontend calculamos taxes de manera opcional
+  taxes?: number;
 }
 
 // Parar crear nuestro DTO de producto omitimos el id y category del producto
