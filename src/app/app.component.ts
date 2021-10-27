@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 import { UsersService } from './services/users.service';
+import { FilesService } from './services/files.service';
 
 @Component({
   selector: 'app-root',
@@ -12,8 +13,12 @@ export class AppComponent {
   showImg = true;
   // guardamos el token en memoria
   token = '';
+  imgRta = '';
 
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private filesService: FilesService
+  ) {}
 
   onLoaded(img: string) {
     console.log('log padre', img);
@@ -33,6 +38,34 @@ export class AppComponent {
       .subscribe((rta) => {
         console.log(rta);
       });
+  }
+
+  downloadPdf() {
+    this.filesService
+      // indicamos el archivo que queremos descargar
+      .getFile(
+        'my.pdf',
+        'https://young-sands-07814.herokuapp.com/api/files/dummy.pdf',
+        'application/pdf'
+      )
+      .subscribe();
+  }
+
+  /**
+   *
+   * @param event evento que recibimos desde html
+   */
+  onUpload(event: Event) {
+    const element = event.target as HTMLInputElement;
+    // obtenemos el archivo del html element
+    const file = element.files?.item(0);
+    // validamos si existe archivo
+    if (file) {
+      // enviamos nuestro archivo
+      this.filesService.uploadFile(file).subscribe((rta) => {
+        this.imgRta = rta.location;
+      });
+    }
   }
 
   // obtenemos la info del perfil que ya esta logeado
